@@ -1,0 +1,20 @@
+.itemContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.itemInfoContainer {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.itemInfoContainer a {
+  color: royalblue;
+  text-decoration: none;
+}
+
+.itemInfoTag {
+  min-width: 100px;
+  color: #777;
+}
