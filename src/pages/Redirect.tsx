@@ -1,16 +1,16 @@
 import { ReactElement, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ItemState /*, ShortenerActionKind */ } from "../store/actions";
+import { ItemState, ShortenerActionKind } from "../store/actions";
 import { ItemsContext } from "../provider/ItemsProvider";
 import { Loader } from "../components";
 
 export function Redirect(): ReactElement {
-  const { state } = useContext(ItemsContext);
+  const { state, dispatch } = useContext(ItemsContext);
 
   const { id } = useParams();
   const [item, setItem] = useState<ItemState | null | undefined>(null);
 
-  function setLocalStorage(id: string | undefined) {
+  /* function setLocalStorage(id: string | undefined) {
     const data = localStorage.getItem("urls");
     if (data && id) {
       const itemsStorage: ItemState[] = JSON.parse(data);
@@ -20,7 +20,7 @@ export function Redirect(): ReactElement {
         localStorage.setItem("urls", JSON.stringify(itemsStorage));
       }
     }
-  }
+  } */
 
   useEffectOnce(() => {
     if (state.items) {
@@ -29,11 +29,11 @@ export function Redirect(): ReactElement {
       if (itemUrl) {
         setItem(itemUrl);
 
-        /* dispatch({
+        dispatch({
           type: ShortenerActionKind.ADD_VIEW,
           payload: itemUrl.shortUrl,
-	}); */
-        setLocalStorage(id);
+        });
+        // setLocalStorage(id);
 
         window.location.href = itemUrl.url;
       } else {
@@ -81,6 +81,12 @@ export const useEffectOnce = (effect: () => void | (() => void)) => {
 };
 
 /*
+ * RAZÓN POR LA QUE SE PRODUCE EL DOBLE RENDERIZADO EN EL MODO ESTRICTO CON USEEFFECT. VER:
  * https://www.techiediaries.com/react-18-useeffect/
  * https://dev.to/ag-grid/react-18-avoiding-use-effect-getting-called-twice-4i9e
+ *
+ * CLONADO PROFUNDO DE UN ARRAY DE OBJETOS. VER:
+ * https://stackoverflow.com/questions/597588/how-do-you-clone-an-array-of-objects-in-javascript
+ * ¿EL MÉTODO ARRAY.FIND DEVUELVE UNA COPIA O UNA REFERENCIA DEL ELEMENTO COINCIDENTE DE LA MATRIZ DADA?. VER:
+ * https://stackoverflow.com/questions/62497165/does-array-find-method-return-a-copy-or-a-reference-of-the-matched-element-form
  */
